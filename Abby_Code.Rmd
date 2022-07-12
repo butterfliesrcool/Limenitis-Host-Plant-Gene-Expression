@@ -1,0 +1,13 @@
+---
+title: "Abby_Code"
+author: "Abby Robinson"
+date: "7/12/2022"
+output: html_document
+---
+
+This is my document to practice writing code 
+
+```{r}
+
+```
+
