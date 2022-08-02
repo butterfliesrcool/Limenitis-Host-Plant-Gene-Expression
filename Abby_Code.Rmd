@@ -5,9 +5,60 @@ date: "7/12/2022"
 output: html_document
 ---
 
-This is my document to practice writing code 
+Load Libraries
+```{r}
+library(curl)
+library(survival)
+library(survminer)
+library(ggplot2)
+```
+
+Load caterpillar development data using the "curl" command 
+```{r}
+d <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/caterpillar.dev.data.csv")
+dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+dev
+length(dev$caterpillar.length)
+```
+
+Remove NA data 
+```{r}
+dev <- na.omit(dev)
+length(dev$caterpillar.length)
+```
+
+Summary Stats 
+Code Source: https://r-coder.com/aggregate-r/
+```{r}
+only.cats <- subset(dev, stage == "caterpillar", drop = FALSE)
+
+sum.stats <- aggregate(x= only.cats$caterpillar.length, by= list(only.cats$date, only.cats$host.plant), FUN=mean)
+colnames(sum.stats)[1] <- "Date"
+colnames(sum.stats)[2] <- "Host-Plant"
+colnames(sum.stats)[3] <- "Caterpillar-Length(mm)"
+sum.stats
+```
+Survival Analysis 
+Code Source: https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html
+```{r}
+pup.rate <- survfit(Surv(dev.days, status) ~ host.plant, data = dev)
+summary(pup.rate)
+```
 
 ```{r}
+coxph(Surv(dev.days, status) ~ host.plant, data=dev)
+```
 
+```{r}
+survdiff(Surv(dev.days, status) ~ host.plant, data=dev)
+pairwise_survdiff(Surv(dev.days, status) ~ host.plant, p.adjust.method = "BH",
+     data = dev)
+```
+
+```{r}
+ggsurvplot(
+    fit = survfit(Surv(dev.days, status) ~ host.plant, data = dev), 
+    xlab = "Days to Pupation", 
+    ylab = "Rate of Pupation")
 ```
 
