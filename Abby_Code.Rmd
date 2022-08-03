@@ -93,5 +93,16 @@ ggsurvplot(
     xlab = "Days to Pupation", 
     ylab = "Rate of Pupation")
 ```
+
 R Module for making pretty figures in ggplot: https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/
+
+things we can do next: 
+1. Make the ggplot prettier
+2. Write interpretation of the survival analysis 
+3. Add to summary stats: calculate average days to pupation for caterpillars reared on aspen and cherry 4. Add instars to the dataset, pull out all 4th/5th instar caterpillars or pre-pupa and see if we see significant differences in length of pre-pupa caterpillars between cherry and aspen 
+5. Make cool figures showing the differences in average caterpillar length between the two host plants (might be more informative to show only the length of late instar caterpillars)
+6. Try to calculate caterpillar mortality by comparing the original caterpillar counts (in the google drive) to the number of pupa/adults we have 
+
+
+
 
