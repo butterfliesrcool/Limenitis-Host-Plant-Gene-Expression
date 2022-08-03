@@ -38,17 +38,49 @@ colnames(sum.stats)[2] <- "Host-Plant"
 colnames(sum.stats)[3] <- "Caterpillar-Length(mm)"
 sum.stats
 ```
-Survival Analysis 
+
+```{r}
+aspen <- subset(sum.stats, sum.stats[2] == "aspen", drop = FALSE)
+aspen
+aspen$`Caterpillar-Length(mm)`
+```
+
+```{r}
+cherry <- subset(sum.stats, sum.stats[2] == "cherry", drop = FALSE)
+cherry
+cherry$`Caterpillar-Length(mm)`
+```
+
+```{r}
+aspen[1]
+```
+
+```{r}
+df <- data.frame(
+  date = aspen[1],
+  aspen = aspen$`Caterpillar-Length(mm)`,
+  cherry = cherry$`Caterpillar-Length(mm)`
+)
+
+growth <- t(cbind(df$aspen, df$cherry))
+
+barplot(growth, beside=T, names.arg = df$date, col=c("black","grey"))
+```
+**Survival Analysis**
+Within the package "Survival" we can use the function "Surv" to create a Survival object. We can then use the function "survfit" to generate the rate of pupation 
 Code Source: https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html
 ```{r}
 pup.rate <- survfit(Surv(dev.days, status) ~ host.plant, data = dev)
 summary(pup.rate)
 ```
 
+
+Cox proportional-hazards regression model 
 ```{r}
 coxph(Surv(dev.days, status) ~ host.plant, data=dev)
 ```
 
+The pairwise_survdiff() function is another way to generate pairwise comparisons in the survival/pupation differences between individuals reared on different host plants 
 ```{r}
 survdiff(Surv(dev.days, status) ~ host.plant, data=dev)
 pairwise_survdiff(Surv(dev.days, status) ~ host.plant, p.adjust.method = "BH",
@@ -61,4 +93,5 @@ ggsurvplot(
     xlab = "Days to Pupation", 
     ylab = "Rate of Pupation")
 ```
+R Module for making pretty figures in ggplot: https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/
 
