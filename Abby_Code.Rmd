@@ -5,9 +5,111 @@ date: "7/12/2022"
 output: html_document
 ---
 
-This is my document to practice writing code 
+Load Libraries
+```{r}
+library(curl)
+library(survival)
+library(survminer)
+library(ggplot2)
+```
+
+Load caterpillar development data using the "curl" command 
+```{r}
+c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/caterpillar.dev.data.csv")
+dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+dev
+length(dev$caterpillar.length)
+```
+
+Remove NA data 
+```{r}
+dev <- na.omit(dev)
+length(dev$caterpillar.length)
+```
+
+Summary Stats 
+Code Source: https://r-coder.com/aggregate-r/
+```{r}
+only.cats <- subset(dev, stage == "caterpillar", drop = FALSE)
+
+sum.stats <- aggregate(x= only.cats$caterpillar.length, by= list(only.cats$date, only.cats$host.plant), FUN=mean)
+colnames(sum.stats)[1] <- "Date"
+colnames(sum.stats)[2] <- "Host-Plant"
+colnames(sum.stats)[3] <- "Caterpillar-Length(mm)"
+sum.stats
+```
+```{r}
+day1 <- subset(only.cats, date == "15-Jul", drop = FALSE)
+
+day1.aspen <- subset(day1, host.plant == "aspen", drop = FALSE)
+day1.aspen
+length(day1.aspen$caterpillar.length)
+```
 
 ```{r}
-
+aspen <- subset(sum.stats, sum.stats[2] == "aspen", drop = FALSE)
+aspen
+aspen$`Caterpillar-Length(mm)`
 ```
+
+```{r}
+cherry <- subset(sum.stats, sum.stats[2] == "cherry", drop = FALSE)
+cherry
+cherry$`Caterpillar-Length(mm)`
+```
+
+```{r}
+aspen[1]
+```
+
+```{r}
+df <- data.frame(
+  date = aspen[1],
+  aspen = aspen$`Caterpillar-Length(mm)`,
+  cherry = cherry$`Caterpillar-Length(mm)`
+)
+
+growth <- t(cbind(df$aspen, df$cherry))
+
+barplot(growth, beside=T, names.arg = df$date, col=c("black","grey"))
+```
+**Survival Analysis**
+Within the package "Survival" we can use the function "Surv" to create a Survival object. We can then use the function "survfit" to generate the rate of pupation 
+Code Source: https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html
+```{r}
+pup.rate <- survfit(Surv(dev.days, status) ~ host.plant, data = dev)
+summary(pup.rate)
+```
+
+
+Cox proportional-hazards regression model 
+```{r}
+coxph(Surv(dev.days, status) ~ host.plant, data=dev)
+```
+
+The pairwise_survdiff() function is another way to generate pairwise comparisons in the survival/pupation differences between individuals reared on different host plants 
+```{r}
+survdiff(Surv(dev.days, status) ~ host.plant, data=dev)
+pairwise_survdiff(Surv(dev.days, status) ~ host.plant, p.adjust.method = "BH",
+     data = dev)
+```
+
+```{r}
+ggsurvplot(
+    fit = survfit(Surv(dev.days, status) ~ host.plant, data = dev), 
+    xlab = "Days to Pupation", 
+    ylab = "Rate of Pupation")
+```
+
+R Module for making pretty figures in ggplot: https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/
+
+things we can do next: 
+1. Make the ggplot prettier
+2. Write interpretation of the survival analysis 
+3. Add to summary stats: calculate average days to pupation for caterpillars reared on aspen and cherry 4. Add instars to the dataset, pull out all 4th/5th instar caterpillars or pre-pupa and see if we see significant differences in length of pre-pupa caterpillars between cherry and aspen 
+5. Make cool figures showing the differences in average caterpillar length between the two host plants (might be more informative to show only the length of late instar caterpillars)
+6. Try to calculate caterpillar mortality by comparing the original caterpillar counts (in the google drive) to the number of pupa/adults we have 
+
+
+
 
