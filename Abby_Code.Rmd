@@ -15,7 +15,7 @@ library(ggplot2)
 
 Load caterpillar development data using the "curl" command 
 ```{r}
-d <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/caterpillar.dev.data.csv")
+c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/caterpillar.dev.data.csv")
 dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
 dev
 length(dev$caterpillar.length)
@@ -37,6 +37,13 @@ colnames(sum.stats)[1] <- "Date"
 colnames(sum.stats)[2] <- "Host-Plant"
 colnames(sum.stats)[3] <- "Caterpillar-Length(mm)"
 sum.stats
+```
+```{r}
+day1 <- subset(only.cats, date == "15-Jul", drop = FALSE)
+
+day1.aspen <- subset(day1, host.plant == "aspen", drop = FALSE)
+day1.aspen
+length(day1.aspen$caterpillar.length)
 ```
 
 ```{r}
