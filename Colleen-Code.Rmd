@@ -252,7 +252,7 @@ day7.aspen
 length(day7.aspen$caterpillar.length)
 ```
 ```{r}
-day7c <- length(day5.aspen$caterpillar.length)
+day7c <- length(day7.aspen$caterpillar.length)
 ```
 ```{r}
 day7p <- subset(only.pup, date == "29-Jul", drop = FALSE)
@@ -384,7 +384,7 @@ day7.aspen
 length(day7.aspen$caterpillar.length)
 ```
 ```{r}
-day7c <- length(day5.aspen$caterpillar.length)
+day7c <- length(day7.aspen$caterpillar.length)
 ```
 ```{r}
 day7p <- subset(only.pup, date == "29-Jul", drop = FALSE)
@@ -575,4 +575,184 @@ length(day7ad.cherry$caterpillar.length)
 ```
 ```{r}
 day7adcherry <- length(day7ad.cherry$caterpillar.length)
+```
+```{r}
+day8 <- subset(only.cats, date == "3-Aug", drop = FALSE)
+
+day8.aspen <- subset(day8, host.plant == "aspen", drop = FALSE)
+day8.aspen
+length(day8.aspen$caterpillar.length)
+```
+```{r}
+day8cat <- length(day8.aspen$caterpillar.length)
+```
+```{r}
+day8p <- subset(only.pup, date == "3-Aug", drop = FALSE)
+
+day8p.aspen <- subset(day8p, host.plant == "aspen", drop = FALSE)
+day8p.aspen
+length(day8p.aspen$caterpillar.length)
+```
+```{r}
+day8pup <- length(day8p.aspen$caterpillar.length)
+```
+```{r}
+day8ad <- subset(only.ad, date == "3-Aug", drop = FALSE)
+
+day8ad.aspen <- subset(day8ad, host.plant == "aspen", drop = FALSE)
+day8ad.aspen
+length(day8ad.aspen$caterpillar.length)
+```
+```{r}
+day8adult <- length(day8ad.aspen$caterpillar.length)
+```
+```{r}
+day9 <- subset(only.cats, date == "5-Aug", drop = FALSE)
+
+day9.aspen <- subset(day9, host.plant == "aspen", drop = FALSE)
+day9.aspen
+length(day9.aspen$caterpillar.length)
+```
+```{r}
+day9cat <- length(day9.aspen$caterpillar.length)
+```
+```{r}
+day9p <- subset(only.pup, date == "5-Aug", drop = FALSE)
+
+day9p.aspen <- subset(day9p, host.plant == "aspen", drop = FALSE)
+day9p.aspen
+length(day9p.aspen$caterpillar.length)
+```
+```{r}
+day9pup <- length(day9p.aspen$caterpillar.length)
+```
+```{r}
+day9ad <- subset(only.ad, date == "5-Aug", drop = FALSE)
+
+day9ad.aspen <- subset(day9ad, host.plant == "aspen", drop = FALSE)
+day9ad.aspen
+length(day9ad.aspen$caterpillar.length)
+```
+```{r}
+day9adult <- length(day9ad.aspen$caterpillar.length)
+```
+```{r}
+day10 <- subset(only.cats, date == "8-Aug", drop = FALSE)
+
+day10.aspen <- subset(day10, host.plant == "aspen", drop = FALSE)
+day10.aspen
+length(day10.aspen$caterpillar.length)
+```
+```{r}
+day10cat <- length(day10.aspen$caterpillar.length)
+```
+```{r}
+day10p <- subset(only.pup, date == "8-Aug", drop = FALSE)
+
+day10p.aspen <- subset(day10p, host.plant == "aspen", drop = FALSE)
+day10p.aspen
+length(day10p.aspen$caterpillar.length)
+```
+```{r}
+day10pup <- length(day10p.aspen$caterpillar.length)
+```
+```{r}
+day10ad <- subset(only.ad, date == "8-Aug", drop = FALSE)
+
+day10ad.aspen <- subset(day10ad, host.plant == "aspen", drop = FALSE)
+day10ad.aspen
+length(day10ad.aspen$caterpillar.length)
+```
+```{r}
+day10adult <- length(day10ad.aspen$caterpillar.length)
+```
+```{r}
+day8cat <- subset(only.cats, date == "3-Aug", drop = FALSE)
+
+day8cat.cherry <- subset(day8cat, host.plant == "cherry", drop = FALSE)
+day8cat.cherry
+length(day8cat.cherry$caterpillar.length)
+```
+```{r}
+day8catcherry <- length(day8cat.cherry$caterpillar.length)
+```
+```{r}
+day8pup <- subset(only.pup, date == "3-Aug", drop = FALSE)
+
+day8pup.cherry <- subset(day8pup, host.plant == "cherry", drop = FALSE)
+day8pup.cherry
+length(day8pup.cherry$caterpillar.length)
+```
+```{r}
+day8pupcherry <- length(day8pup.cherry$caterpillar.length)
+```
+```{r}
+day8ad <- subset(only.ad, date == "3-Aug", drop = FALSE)
+
+day8ad.cherry <- subset(day8ad, host.plant == "cherry", drop = FALSE)
+day8ad.cherry
+length(day8ad.cherry$caterpillar.length)
+```
+```{r}
+day8adcherry <- length(day8ad.cherry$caterpillar.length)
+```
+```{r}
+day9cat <- subset(only.cats, date == "5-Aug", drop = FALSE)
+
+day9cat.cherry <- subset(day9cat, host.plant == "cherry", drop = FALSE)
+day9cat.cherry
+length(day9cat.cherry$caterpillar.length)
+```
+```{r}
+day9catcherry <- length(day9cat.cherry$caterpillar.length)
+```
+```{r}
+day9pup <- subset(only.pup, date == "5-Aug", drop = FALSE)
+
+day9pup.cherry <- subset(day9pup, host.plant == "cherry", drop = FALSE)
+day9pup.cherry
+length(day9pup.cherry$caterpillar.length)
+```
+```{r}
+day9pupcherry <- length(day9pup.cherry$caterpillar.length)
+```
+```{r}
+day9ad <- subset(only.ad, date == "5-Aug", drop = FALSE)
+
+day9ad.cherry <- subset(day9ad, host.plant == "cherry", drop = FALSE)
+day9ad.cherry
+length(day9ad.cherry$caterpillar.length)
+```
+```{r}
+day9adcherry <- length(day9ad.cherry$caterpillar.length)
+```
+```{r}
+day10cat <- subset(only.cats, date == "8-Aug", drop = FALSE)
+
+day10cat.cherry <- subset(day10cat, host.plant == "cherry", drop = FALSE)
+day10cat.cherry
+length(day10cat.cherry$caterpillar.length)
+```
+```{r}
+day10catcherry <- length(day10cat.cherry$caterpillar.length)
+```
+```{r}
+day10pup <- subset(only.pup, date == "8-Aug", drop = FALSE)
+
+day10pup.cherry <- subset(day10pup, host.plant == "cherry", drop = FALSE)
+day10pup.cherry
+length(day10pup.cherry$caterpillar.length)
+```
+```{r}
+day10pupcherry <- length(day10pup.cherry$caterpillar.length)
+```
+```{r}
+day10ad <- subset(only.ad, date == "8-Aug", drop = FALSE)
+
+day10ad.cherry <- subset(day10ad, host.plant == "cherry", drop = FALSE)
+day10ad.cherry
+length(day10ad.cherry$caterpillar.length)
+```
+```{r}
+day10adcherry <- length(day10ad.cherry$caterpillar.length)
 ```
