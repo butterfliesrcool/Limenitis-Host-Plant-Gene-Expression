@@ -15,7 +15,7 @@ library(ggplot2)
 
 Load caterpillar development data using the "curl" command 
 ```{r}
-c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/caterpillar.dev.data.csv")
+c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/cat.dev.data1.csv")
 dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
 dev
 length(dev$caterpillar.length)
@@ -77,28 +77,39 @@ barplot(growth, beside=T, names.arg = df$date, col=c("black","grey"))
 Within the package "Survival" we can use the function "Surv" to create a Survival object. We can then use the function "survfit" to generate the rate of pupation 
 Code Source: https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html
 ```{r}
-pup.rate <- survfit(Surv(dev.days, status) ~ host.plant, data = dev)
+pup.rate <- survfit(Surv(dev.days, status.) ~ host.plant, data = dev)
 summary(pup.rate)
 ```
 
 
 Cox proportional-hazards regression model 
 ```{r}
-coxph(Surv(dev.days, status) ~ host.plant, data=dev)
-```
-
-The pairwise_survdiff() function is another way to generate pairwise comparisons in the survival/pupation differences between individuals reared on different host plants 
-```{r}
-survdiff(Surv(dev.days, status) ~ host.plant, data=dev)
-pairwise_survdiff(Surv(dev.days, status) ~ host.plant, p.adjust.method = "BH",
-     data = dev)
+coxph(Surv(dev.days, status.) ~ host.plant, data = dev)
 ```
 
 ```{r}
 ggsurvplot(
-    fit = survfit(Surv(dev.days, status) ~ host.plant, data = dev), 
+    fit = survfit(Surv(dev.days, status.) ~ host.plant, data = dev), 
     xlab = "Days to Pupation", 
-    ylab = "Rate of Pupation")
+    ylab = "Rate of Pupation",
+    fun = "event")
+```
+
+
+```{r}
+### non-ggplot plot (lots of easy resources online to make these pretty
+
+cats <- survfit(Surv(dev.days, status.) ~ host.plant, data = dev)
+plot(cats,     
+    xlab = "days since hatching", 
+    ylab = "rate of pupation",
+    fun = "event",
+    col = c("darkolivegreen", "darkorchid4" ), lwd=3,
+    )
+
+legend(0, 1.0, legend=c("Aspen", "Black Cherry"),
+       col=c("darkolivegreen", "darkorchid4"), lty=1:1, cex=1.5, title = "Host Plants")
+
 ```
 
 R Module for making pretty figures in ggplot: https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/

@@ -1,0 +1,69 @@
+---
+title: "Final_Code"
+author: "Abby Robinson and Colleen Fetherston"
+date: "8/10/2022"
+output: html_document
+---
+
+Load Libraries
+```{r}
+library(curl)
+library(survival)
+library(survminer)
+library(ggplot2)
+```
+
+Load caterpillar development data using the "curl" command 
+```{r}
+c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/cat.dev.data1.csv")
+dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+dev
+length(dev$caterpillar.length)
+```
+
+Remove NA data 
+```{r}
+dev <- na.omit(dev)
+length(dev$caterpillar.length)  ##this number seems unrealistically smaller than the value before removing NAs... we should take a look at the dataset 
+```
+
+**Survival Analysis**
+Within the package "Survival" we can use the function "Surv" to create a Survival object. We can then use the function "survfit" to generate the rate of pupation 
+Code Source: https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html
+```{r}
+pup.rate <- survfit(Surv(dev.days, status.) ~ host.plant, data = dev)
+summary(pup.rate)
+```
+
+
+Cox proportional-hazards regression model 
+```{r}
+coxph(Surv(dev.days, status.) ~ host.plant, data = dev)
+```
+
+```{r}
+### non-ggplot plot (lots of easy resources online to make these pretty
+
+cats <- survfit(Surv(dev.days, status.) ~ host.plant, data = dev)
+plot(cats,     
+    xlab = "days since hatching", 
+    ylab = "rate of pupation",
+    fun = "event",
+    col = c("darkolivegreen", "darkorchid4" ), lwd=3,
+    )
+
+legend(0, 1.0, legend=c("Aspen", "Black Cherry"),
+       col=c("darkolivegreen", "darkorchid4"), lty=1:1, cex=1.5, title = "Host Plants")
+
+```
+
+Next Steps: 
+
+1. add caterpillar mortality informaiton to cvs file
+2. re-organize and clean up dataset 
+3. rerun code with updated data file 
+4. make survival plots for caterpillar mortality 
+5. calculate mean caterpillar length for each host plant (optional: we could add instar data into the cvs file and separate averge caterpillar length by instar, but I think this is less reliable data because we didn't have defined, clear criteria for identifying instars)
+6. run a statistical analysis (chi squared or GLM? or just an LM?) to test for differences in caterpillar length between host plants 
+7. make pretty and informative plots!! :)
+
