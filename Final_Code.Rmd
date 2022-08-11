@@ -102,6 +102,7 @@ Next Steps:
 1. add caterpillar mortality informaiton to cvs file
 2. re-organize and clean up dataset 
 3. rerun code with updated data file 
+4. delete all old datafiles in the GitHub 
 4. make survival plots for caterpillar mortality 
 5. calculate mean caterpillar length for each host plant (optional: we could add instar data into the cvs file and separate averge caterpillar length by instar, but I think this is less reliable data because we didn't have defined, clear criteria for identifying instars)
 6. run a statistical analysis (chi squared or GLM? or just an LM?) to test for differences in caterpillar length between host plants 
