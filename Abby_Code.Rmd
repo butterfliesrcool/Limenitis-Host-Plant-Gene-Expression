@@ -122,5 +122,46 @@ things we can do next:
 6. Try to calculate caterpillar mortality by comparing the original caterpillar counts (in the google drive) to the number of pupa/adults we have 
 
 
+##Linear Model Analysis 
+#### We could add in the instar data and pull out all 4th and 5th instar caterpillars? 
+Use this link to guide this step of the analysis: https://fuzzyatelin.github.io/bioanth-stats/module-14/module-14.html
+
+Load caterpillar development data using the "curl" command 
+```{r}
+c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/cat.dev.data1.csv")
+dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+dev
+length(dev$caterpillar.length)
+```
+
+Remove NA data 
+```{r}
+dev <- na.omit(dev)
+length(dev$caterpillar.length)
+```
+
+```{r}
+class(dev$host.plant)
+```
+
+```{r}
+dev$host.plant <- as.factor(dev$host.plant)
+class(dev$host.plant)
+```
+
+```{r}
+summary(dev$host.plant)
+```
+
+```{r}
+plot(dev$caterpillar.length ~ dev$host.plant)
+```
+
+```{r}
+m <- lm(data = dev, caterpillar.length ~ caterpillar.length)
+summary(m)
+```
+
+
 
 
