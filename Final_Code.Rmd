@@ -35,7 +35,6 @@ pup.rate <- survfit(Surv(dev.days, status.) ~ host.plant, data = dev)
 summary(pup.rate)
 ```
 
-
 Cox proportional-hazards regression model 
 ```{r}
 coxph(Surv(dev.days, status.) ~ host.plant, data = dev)
@@ -58,7 +57,7 @@ legend(0, 1.0, legend=c("Aspen", "Black Cherry"),
 ```
 
 ##Linear Model Analysis 
-#### We could add in the instar data and pull out all 4th and 5th instar caterpillars? 
+#### We could add in the instar data and pull out all 4th,  5th, and pre-pupa instar caterpillars? 
 #### Could also try running an ANOVA (aov command) and running residuals 
 Use this link to guide this step of the analysis: https://fuzzyatelin.github.io/bioanth-stats/module-14/module-14.html
 
