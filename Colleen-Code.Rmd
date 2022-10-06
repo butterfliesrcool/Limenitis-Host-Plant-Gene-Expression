@@ -5,22 +5,29 @@ library(survminer)
 library(ggplot2)
 ```
 ```{r}
-d <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/cat.dev.data1.csv")
+d <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/cat.dev.data.complete2.csv")
 dev <- read.csv(d, header = TRUE, sep = ",", stringsAsFactors = FALSE)
 dev
 length(dev$caterpillar.length)
 ```
 ```{r}
-dev <- na.omit(dev)
-length(dev$caterpillar.length)
+only.cats <- subset(dev, stage == "caterpillar", drop = FALSE) #isolates caterpillars from full data set
 ```
 ```{r}
-only.cats <- subset(dev, stage == "caterpillar", drop = FALSE) #isolates caterpillars from full data set
-
-sum.stats <- aggregate(x= only.cats$caterpillar.length, by= list(only.cats$date, only.cats$host.plant), FUN=mean)
-colnames(sum.stats)[1] <- "Date"
-colnames(sum.stats)[2] <- "Host-Plant"
-colnames(sum.stats)[3] <- "Caterpillar-Length(mm)"
+is.numeric(only.cats$caterpillar.length)
+```
+```{r}
+is.factor(only.cats$host.plant)
+```
+```{r}
+only.cats$host.plant <- as.factor(only.cats$host.plant)
+is.factor(only.cats$host.plant)
+```
+```{r}
+late.instar.cat <- subset(only.cats, instar %in% c("4", "5", "pre"), drop = FALSE)
+```
+```{r}
+sum.stats <- aggregate(x= late.instar.cat$caterpillar.length, by= list(late.instar.cat$host.plant), FUN=mean)
 sum.stats
 ```
 ```{r}
@@ -273,7 +280,8 @@ length(day7ad.aspen$caterpillar.length)
 ```
 ```{r}
 day7adult <- length(day7ad.aspen$caterpillar.length)
-
+```
+```{r}
 day3p.aspen <- subset(day3p, host.plant == "aspen", drop = FALSE)
 day3p.aspen
 length(day3p.aspen$caterpillar.length)
@@ -469,7 +477,7 @@ day4catcherry <- length(day4cat.cherry$caterpillar.length)
 ```{r}
 day4pup <- subset(only.pup, date == "22-Jul", drop = FALSE)
 
-day4pup.cherry <- subset(day4, host.plant == "cherry", drop = FALSE)
+day4pup.cherry <- subset(day4pup, host.plant == "cherry", drop = FALSE)
 day4pup.cherry
 length(day4pup.cherry$caterpillar.length)
 ```
