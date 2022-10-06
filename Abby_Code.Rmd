@@ -15,17 +15,151 @@ library(ggplot2)
 
 Load caterpillar development data using the "curl" command 
 ```{r}
-c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/cat.dev.data1.csv")
+c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/cat.dev.mort.data.csv")
+dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+dev
+length(dev$caterpillar.length) 
+```
+**Survival Analysis**
+Within the package "Survival" we can use the function "Surv" to create a Survival object. We can then use the function "survfit" to generate the rate of pupation 
+Code Source: https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html
+
+```{r}
+pup.dev <- subset(dev, stage %in% c("caterpillar", "pupa", "adult"), drop = FALSE)
+pup.dev
+```
+
+```{r}
+pup.rate <- survfit(Surv(dev.days, pupa.status) ~ host.plant, data = pup.dev)
+summary(pup.rate)
+```
+
+Cox proportional-hazards regression model 
+```{r}
+coxph(Surv(dev.days, pupa.status) ~ host.plant, data = pup.dev)
+```
+
+```{r}
+ggsurvplot(
+    fit = survfit(Surv(dev.days, pupa.status) ~ host.plant, data = pup.dev), 
+    xlab = "Days to Pupation", 
+    ylab = "Rate of Pupation",
+    fun = "event")
+```
+
+```{r}
+### non-ggplot plot (lots of easy resources online to make these pretty
+
+cats <- survfit(Surv(dev.days, pupa.status) ~ host.plant, data = pup.dev)
+plot(cats,     
+    xlab = "days since hatching", 
+    ylab = "rate of pupation",
+    fun = "event",
+    col = c("darkolivegreen", "darkorchid4" ), lwd=3,
+    )
+
+legend(0, 1.0, legend=c("Aspen", "Black Cherry"),
+       col=c("darkolivegreen", "darkorchid4"),lwd=3, lty=1:1, cex=1.5, title = "Host Plants")
+
+```
+
+
+```{r}
+mortality <- survfit(Surv(dev.days, mort.status) ~ host.plant, data = dev)
+summary(mortality)
+```
+
+Cox proportional-hazards regression model 
+```{r}
+coxph(Surv(dev.days, mort.status) ~ host.plant, data = dev)
+```
+
+```{r}
+### non-ggplot plot (lots of easy resources online to make these pretty
+
+mortality <- survfit(Surv(dev.days, mort.status) ~ host.plant, data = dev)
+plot(mortality,     
+    xlab = "days since hatching", 
+    ylab = "rate of caterpillar death",
+    col = c("darkolivegreen", "darkorchid4" ), lwd=3,
+    )
+
+legend(0, 1.0, legend=c("Aspen", "Black Cherry"),
+       col=c("darkolivegreen", "darkorchid4"), lty=1:1, cex=1.5, title = "Host Plants")
+###figure out how to extend the lines further?
+```
+
+R Module for making pretty figures in ggplot: https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/
+
+things we can do next: 
+1. Make the ggplot prettier
+2. Write interpretation of the survival analysis 
+3. Add to summary stats: calculate average days to pupation for caterpillars reared on aspen and cherry 4. Add instars to the dataset, pull out all 4th/5th instar caterpillars or pre-pupa and see if we see significant differences in length of pre-pupa caterpillars between cherry and aspen 
+5. Make cool figures showing the differences in average caterpillar length between the two host plants (might be more informative to show only the length of late instar caterpillars)
+6. Try to calculate caterpillar mortality by comparing the original caterpillar counts (in the google drive) to the number of pupa/adults we have 
+
+
+##Linear Model Analysis 
+#### We could add in the instar data and pull out all 4th and 5th instar caterpillars? 
+Use this link to guide this step of the analysis: https://fuzzyatelin.github.io/bioanth-stats/module-14/module-14.html
+
+Load caterpillar development data using the "curl" command 
+```{r}
+c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/caterpillar.development.data.csv")
 dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
 dev
 length(dev$caterpillar.length)
 ```
 
+
+```{r}
+late.instars <- subset(dev, instar %in% c("4", "5", "pre"), drop = FALSE)
+late.instars
+length(late.instars$caterpillar.length)
+```
+
+
+```{r}
+is.numeric(late.instars$caterpillar.length)
+late.instars$caterpillar.length <- as.numeric(late.instars$caterpillar.length)
+is.numeric(late.instars$caterpillar.length)
+length(late.instars$caterpillar.length)
+```
+
 Remove NA data 
 ```{r}
-dev <- na.omit(dev)
-length(dev$caterpillar.length)
+late.instars$caterpillar.length <- na.omit(late.instars$caterpillar.length)
+length(late.instars$caterpillar.length)
 ```
+
+```{r}
+class(late.instars$host.plant)
+```
+
+```{r}
+late.instars$host.plant <- as.factor(late.instars$host.plant)
+class(late.instars$host.plant)
+```
+
+```{r}
+summary(late.instars$host.plant)
+```
+
+```{r}
+mean.cat.length <- aggregate(x= late.instars$caterpillar.length, by= list(late.instars$host.plant), FUN=mean)
+mean.cat.length
+```
+
+```{r}
+plot(late.instars$caterpillar.length ~ late.instars$host.plant)
+```
+
+```{r}
+m <- lm(data = late.instars, caterpillar.length ~ host.plant)
+summary(m)
+```
+
+
 
 Summary Stats 
 Code Source: https://r-coder.com/aggregate-r/
@@ -73,95 +207,5 @@ growth <- t(cbind(df$aspen, df$cherry))
 
 barplot(growth, beside=T, names.arg = df$date, col=c("black","grey"))
 ```
-**Survival Analysis**
-Within the package "Survival" we can use the function "Surv" to create a Survival object. We can then use the function "survfit" to generate the rate of pupation 
-Code Source: https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html
-```{r}
-pup.rate <- survfit(Surv(dev.days, status.) ~ host.plant, data = dev)
-summary(pup.rate)
-```
-
-
-Cox proportional-hazards regression model 
-```{r}
-coxph(Surv(dev.days, status.) ~ host.plant, data = dev)
-```
-
-```{r}
-ggsurvplot(
-    fit = survfit(Surv(dev.days, status.) ~ host.plant, data = dev), 
-    xlab = "Days to Pupation", 
-    ylab = "Rate of Pupation",
-    fun = "event")
-```
-
-
-```{r}
-### non-ggplot plot (lots of easy resources online to make these pretty
-
-cats <- survfit(Surv(dev.days, status.) ~ host.plant, data = dev)
-plot(cats,     
-    xlab = "days since hatching", 
-    ylab = "rate of pupation",
-    fun = "event",
-    col = c("darkolivegreen", "darkorchid4" ), lwd=3,
-    )
-
-legend(0, 1.0, legend=c("Aspen", "Black Cherry"),
-       col=c("darkolivegreen", "darkorchid4"), lty=1:1, cex=1.5, title = "Host Plants")
-
-```
-
-R Module for making pretty figures in ggplot: https://www.cedricscherer.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/
-
-things we can do next: 
-1. Make the ggplot prettier
-2. Write interpretation of the survival analysis 
-3. Add to summary stats: calculate average days to pupation for caterpillars reared on aspen and cherry 4. Add instars to the dataset, pull out all 4th/5th instar caterpillars or pre-pupa and see if we see significant differences in length of pre-pupa caterpillars between cherry and aspen 
-5. Make cool figures showing the differences in average caterpillar length between the two host plants (might be more informative to show only the length of late instar caterpillars)
-6. Try to calculate caterpillar mortality by comparing the original caterpillar counts (in the google drive) to the number of pupa/adults we have 
-
-
-##Linear Model Analysis 
-#### We could add in the instar data and pull out all 4th and 5th instar caterpillars? 
-Use this link to guide this step of the analysis: https://fuzzyatelin.github.io/bioanth-stats/module-14/module-14.html
-
-Load caterpillar development data using the "curl" command 
-```{r}
-c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/cat.dev.data1.csv")
-dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
-dev
-length(dev$caterpillar.length)
-```
-
-Remove NA data 
-```{r}
-dev <- na.omit(dev)
-length(dev$caterpillar.length)
-```
-
-```{r}
-class(dev$host.plant)
-```
-
-```{r}
-dev$host.plant <- as.factor(dev$host.plant)
-class(dev$host.plant)
-```
-
-```{r}
-summary(dev$host.plant)
-```
-
-```{r}
-plot(dev$caterpillar.length ~ dev$host.plant)
-```
-
-```{r}
-m <- lm(data = dev, caterpillar.length ~ caterpillar.length)
-summary(m)
-```
-
-
 
 
