@@ -13,12 +13,38 @@ library(survminer)
 library(ggplot2)
 ```
 
-Load caterpillar development data using the "curl" command 
+Load caterpillar mortality data using the "curl" command (only for mortality plot)
 ```{r}
-c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/cat.dev.data1.csv")
+c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/mort.data.for.survival.plot")
 dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
 dev
-length(dev$caterpillar.length)
+length(dev$caterpillar.length) 
+```
+
+```{r}
+mortality <- survfit(Surv(dev.days, mort.status) ~ host.plant, data = dev)
+summary(mortality)
+```
+Cox proportional-hazards regression model 
+```{r}
+coxph(Surv(dev.days, mort.status) ~ host.plant, data = dev)
+```
+```{r}
+### non-ggplot plot (lots of easy resources online to make these pretty
+
+mortality <- survfit(Surv(dev.days, mort.status) ~ host.plant, data = dev)
+plot(mortality,     
+    xlab = "days since hatching", 
+    ylab = "rate of caterpillar death",
+    col = c("darkolivegreen", "darkorchid4" ), lwd=3,
+    )
+
+legend(0, 1.0, legend=c("Aspen", "Black Cherry"),
+       col=c("darkolivegreen", "darkorchid4"), lty=1:1, cex=1.5, title = "Host Plants")
+
+segments(35, .372, 40, .372, col = c("darkolivegreen"), lwd=3)
+segments(35, .104, 40, .104, col = c("darkorchid4"), lwd=3)
+###figure out how to extend the lines further?
 ```
 
 Remove NA data 
