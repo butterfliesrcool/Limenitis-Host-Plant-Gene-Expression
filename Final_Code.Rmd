@@ -4,15 +4,12 @@ author: "Abby Robinson and Colleen Fetherston"
 date: "8/10/2022"
 output: html_document
 ---
-
-Load Libraries
 ```{r}
 library(curl)
 library(survival)
 library(survminer)
 library(ggplot2)
 ```
-
 Load caterpillar mortality data using the "curl" command (only for mortality plot)
 ```{r}
 c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/mort.data.for.survival.plot")
@@ -20,7 +17,6 @@ dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
 dev
 length(dev$caterpillar.length) 
 ```
-
 ```{r}
 mortality <- survfit(Surv(dev.days, mort.status) ~ host.plant, data = dev)
 summary(mortality)
@@ -44,32 +40,42 @@ legend(0, 1.0, legend=c("Aspen", "Black Cherry"),
 
 segments(35, .372, 40, .372, col = c("darkolivegreen"), lwd=3)
 segments(35, .104, 40, .104, col = c("darkorchid4"), lwd=3)
-###figure out how to extend the lines further?
 ```
-
-Remove NA data 
+Load caterpillar development data using the "curl" command (for pupation rate analysis)
 ```{r}
-dev <- na.omit(dev)
-length(dev$caterpillar.length)  ##this number seems unrealistically smaller than the value before removing NAs... we should take a look at the dataset 
+c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/cat.dev.mort.data.csv")
+dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+dev
+length(dev$caterpillar.length) 
 ```
-
 **Survival Analysis**
 Within the package "Survival" we can use the function "Surv" to create a Survival object. We can then use the function "survfit" to generate the rate of pupation 
 Code Source: https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html
+
 ```{r}
-pup.rate <- survfit(Surv(dev.days, status.) ~ host.plant, data = dev)
+pup.dev <- subset(dev, stage %in% c("caterpillar", "pupa", "adult"), drop = FALSE)
+pup.dev
+```
+
+```{r}
+pup.rate <- survfit(Surv(dev.days, pupa.status) ~ host.plant, data = pup.dev)
 summary(pup.rate)
 ```
-
 Cox proportional-hazards regression model 
 ```{r}
-coxph(Surv(dev.days, status.) ~ host.plant, data = dev)
+coxph(Surv(dev.days, pupa.status) ~ host.plant, data = pup.dev)
 ```
-
+```{r}
+ggsurvplot(
+    fit = survfit(Surv(dev.days, pupa.status) ~ host.plant, data = pup.dev), 
+    xlab = "Days to Pupation", 
+    ylab = "Rate of Pupation",
+    fun = "event")
+```
 ```{r}
 ### non-ggplot plot (lots of easy resources online to make these pretty
 
-cats <- survfit(Surv(dev.days, status.) ~ host.plant, data = dev)
+cats <- survfit(Surv(dev.days, pupa.status) ~ host.plant, data = pup.dev)
 plot(cats,     
     xlab = "days since hatching", 
     ylab = "rate of pupation",
@@ -78,59 +84,59 @@ plot(cats,
     )
 
 legend(0, 1.0, legend=c("Aspen", "Black Cherry"),
-       col=c("darkolivegreen", "darkorchid4"), lty=1:1, cex=1.5, title = "Host Plants")
+       col=c("darkolivegreen", "darkorchid4"),lwd=3, lty=1:1, cex=1.5, title = "Host Plants")
 
 ```
-
-##Linear Model Analysis 
-#### We could add in the instar data and pull out all 4th,  5th, and pre-pupa instar caterpillars? 
-#### Could also try running an ANOVA (aov command) and running residuals 
-Use this link to guide this step of the analysis: https://fuzzyatelin.github.io/bioanth-stats/module-14/module-14.html
-
 Load caterpillar development data using the "curl" command 
 ```{r}
-c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/cat.dev.data1.csv")
+c <- curl("https://raw.githubusercontent.com/butterfliesrcool/Limenitis-Host-Plant-Gene-Expression/main/caterpillar.development.data.csv")
 dev <- read.csv(c, header = TRUE, sep = ",", stringsAsFactors = FALSE)
 dev
 length(dev$caterpillar.length)
 ```
-
+```{r}
+late.instars <- subset(dev, instar %in% c("4", "5", "pre"), drop = FALSE)
+late.instars
+length(late.instars$caterpillar.length)
+```
+```{r}
+is.numeric(late.instars$caterpillar.length)
+late.instars$caterpillar.length <- as.numeric(late.instars$caterpillar.length)
+is.numeric(late.instars$caterpillar.length)
+length(late.instars$caterpillar.length)
+```
 Remove NA data 
 ```{r}
-dev <- na.omit(dev)
-length(dev$caterpillar.length)
+late.instars$caterpillar.length <- na.omit(late.instars$caterpillar.length)
+length(late.instars$caterpillar.length)
 ```
 
 ```{r}
-class(dev$host.plant)
+class(late.instars$host.plant)
 ```
 
 ```{r}
-dev$host.plant <- as.factor(dev$host.plant)
-class(dev$host.plant)
+late.instars$host.plant <- as.factor(late.instars$host.plant)
+class(late.instars$host.plant)
 ```
 
 ```{r}
-summary(dev$host.plant)
+summary(late.instars$host.plant)
+```
+```{r}
+mean.cat.length <- aggregate(x= late.instars$caterpillar.length, by= list(late.instars$host.plant), FUN=mean)
+mean.cat.length
 ```
 
 ```{r}
-plot(dev$caterpillar.length ~ dev$host.plant)
+plot(late.instars$caterpillar.length ~ late.instars$host.plant,
+     xlab = "Host Plant",
+     ylab = "Late Instar Cateripllar Length",
+     col = c("darkolivegreen4", "darkorchid4" ) , lwd=1,
+    )
 ```
 
 ```{r}
-m <- lm(data = dev, caterpillar.length ~ caterpillar.length)
+m <- lm(data = late.instars, caterpillar.length ~ host.plant)
 summary(m)
 ```
-
-Next Steps: 
-
-1. add caterpillar mortality informaiton to cvs file
-2. re-organize and clean up dataset 
-3. rerun code with updated data file 
-4. delete all old datafiles in the GitHub 
-4. make survival plots for caterpillar mortality 
-5. calculate mean caterpillar length for each host plant (optional: we could add instar data into the cvs file and separate averge caterpillar length by instar, but I think this is less reliable data because we didn't have defined, clear criteria for identifying instars)
-6. run a statistical analysis (chi squared or GLM? or just an LM?) to test for differences in caterpillar length between host plants 
-7. make pretty and informative plots!! :)
-
